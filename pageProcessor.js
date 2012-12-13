@@ -1,5 +1,6 @@
 
 var proxy=require('./proxy').proxy;
+var Step=require('step');
 
 Page=function(config,basePart,callback){
 	this.config=config;
@@ -9,6 +10,7 @@ Page=function(config,basePart,callback){
 	this.mainPart=[];
 
 }
+
 
 Page.prototype.leftPartLoaded=function(index,body){
 	this.leftPart[index]=body;
@@ -29,22 +31,26 @@ Page.prototype.checkFinished=function(){
 }
 
 function processPage(config,params,callback){
-	processOptionsWithParams(config.basePartOptions,params);
-	proxy.proxyRequest(config.basePartOptions,function(basePart){
-		var page=new Page(config,basePart,callback);
-		config.leftPartOptions.forEach(function(options,index){
-			processOptionsWithParams(options,params);
-			proxy.proxyRequest(options,function(body){
-				page.leftPartLoaded(index,body);
+	Step(
+		function loadBasePart(){
+			processOptionsWithParams(config.basePartOptions,params);
+			proxy.proxyRequest(config.basePartOptions,this);
+		},
+		function buildPage(basePart) {
+			var page=new Page(config,basePart,callback);
+			config.leftPartOptions.forEach(function(options,index){
+				processOptionsWithParams(options,params);
+				proxy.proxyRequest(options,function(body){
+					page.leftPartLoaded(index,body);
+				});
+			});
+			config.mainPartOptions.forEach(function(options,index){
+				processOptionsWithParams(options,params);
+				proxy.proxyRequest(options,function(body){
+					page.mainPartLoaded(index,body);
+				});
 			});
 		});
-		config.mainPartOptions.forEach(function(options,index){
-			processOptionsWithParams(options,params);
-			proxy.proxyRequest(options,function(body){
-				page.mainPartLoaded(index,body);
-			});
-		});
-	});
 }
 
 function processOptionsWithParams(options,params){
