@@ -1,16 +1,16 @@
 exports.default={
-	basePartOptions:{
+	basePart:{
 		host: '127.0.0.1',
 		port: 3000,
 		path: '/index'
 	},
-	leftPartOptions:[
+	leftPart:[
 	{	
 		host: '127.0.0.1',
 		port: 3000,
 		path: '/left'
 	}],
-	mainPartOptions:[
+	mainPart:[
 	{
 		host: '127.0.0.1',
 		port: 3000,
@@ -24,18 +24,18 @@ exports.default={
 };
 
 exports.another={
-	basePartOptions:{
+	basePart:{
 		host: '127.0.0.1',
 		port: 3000,
 		path: '/index'
 	},
-	leftPartOptions:[
+	leftPart:[
 	{	
 		host: '127.0.0.1',
 		port: 3000,
 		path: '/left'
 	}],
-	mainPartOptions:[
+	mainPart:[
 	{
 		host: '127.0.0.1',
 		port: 3000,

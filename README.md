@@ -8,24 +8,24 @@ The following pages acts as backend content provider servers:
 * http://localhost:3000/products
 * http://localhost:3000/users
 
-The main page is provided through:
+The base part of the page is provided through:
 * http://localhost:3000/index
 
 The rule can be configured like this
 
 	{
-		basePartOptions:{
+		basePart:{
 			host: '127.0.0.1',
 			port: 3000,
 			path: '/index'
 		},
-		leftPartOptions:[
+		leftPart:[
 		{	
 			host: '127.0.0.1',
 			port: 3000,
 			path: '/left'
 		}],
-		mainPartOptions:[
+		mainPart:[
 		{
 			host: '127.0.0.1',
 			port: 3000,
@@ -38,4 +38,4 @@ The rule can be configured like this
 		}]
 	}
 
-When you visit http://localhost:3000/, the proxy server will assembles the page and render it to the client.
+When you visit http://localhost:3000/template/:template (here the param can be 'default' or 'another'), the proxy server will assembles the page and render it to the client.

@@ -23,7 +23,7 @@ Page.prototype.mainPartLoaded=function(index,body){
 };
 
 Page.prototype.checkFinished=function(){
-	if(this.leftPart.length==this.config.leftPartOptions.length && this.mainPart.length==this.config.mainPartOptions.length){
+	if(this.leftPart.length==this.config.leftPart.length && this.mainPart.length==this.config.mainPart.length){
 		this.basePart=this.basePart.replace('<!-- left -->',this.leftPart.join(''));
 		this.basePart=this.basePart.replace('<!-- main -->',this.mainPart.join(''));
 		this.callback(this.basePart);
@@ -33,21 +33,21 @@ Page.prototype.checkFinished=function(){
 function processPage(config,params,callback){
 	Step(
 		function loadBasePart(){
-			processOptionsWithParams(config.basePartOptions,params);
-			proxy.proxyRequest(config.basePartOptions,this);
+			processOptionsWithParams(config.basePart,params);
+			proxy.proxyRequest(config.basePart,this);
 		},
 		function buildPage(basePart) {
 			var page=new Page(config,basePart,callback);
-			config.leftPartOptions.forEach(function(options,index){
-				processOptionsWithParams(options,params);
-				proxy.proxyRequest(options,function(body){
-					page.leftPartLoaded(index,body);
-				});
-			});
-			config.mainPartOptions.forEach(function(options,index){
+			config.mainPart.forEach(function(options,index){
 				processOptionsWithParams(options,params);
 				proxy.proxyRequest(options,function(body){
 					page.mainPartLoaded(index,body);
+				});
+			});
+			config.leftPart.forEach(function(options,index){
+				processOptionsWithParams(options,params);
+				proxy.proxyRequest(options,function(body){
+					page.leftPartLoaded(index,body);
 				});
 			});
 		});
