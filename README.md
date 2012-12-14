@@ -1,12 +1,14 @@
 Introduction
 ------------
 
-This node.js server acts as proxy, it asks for contents from serveral backend servers, then assembles them according to the specified rule. 
+This node.js server acts as proxy, it asks for contents from serveral backend servers, then assembles them according to the specified rule. The server has been deployed on [cloudfoundry](http://node-proxy-server.cloudfoundry.com).
 
-The following pages acts as backend content provider servers:
-* http://localhost:3000/left
-* http://localhost:3000/products
-* http://localhost:3000/users
+The following pages act as backend content provider servers:
+* http://node-proxy-server.cloudfoundry.com/left
+* http://node-proxy-server.cloudfoundry.com/products
+* http://node-proxy-server.cloudfoundry.com/users
+
+When you visit http://node-proxy-server.cloudfoundry.com/template/:template (here the param can be 'default' or 'another'), the proxy server will assembles the page and render it to the client.
 
 Rule configuration
 ------------------
@@ -47,4 +49,3 @@ The assembling rule must be configured as follows:
 			}
 		}
 
-When you visit http://localhost:3000/template/:template (here the param can be 'default' or 'another'), the proxy server will assembles the page and render it to the client.
