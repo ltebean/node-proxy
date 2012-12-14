@@ -30,7 +30,8 @@ The assembling rule must be configured as follows:
 					{	
 						host: '127.0.0.1',
 						port: 3000,
-						path: '/left'
+						path: '/left',
+						timeout:2000
 					}]
 				},
 				main:{

@@ -1,20 +1,35 @@
 var http = require('http');
 
 var proxyRequest=function(options,callback){
-	http.get(options, function(res) {
+
+	var timer=setTimeout(function() {
+		req.emit('timeout',{message:'have been timeout...'});
+	}, options.timeout||1000);
+
+	var req=http.get(options, function(res) {
 		var html='';
 		res.on("data", function(chunk) {
 			html+=chunk;
-		}).on("end", function() {
-			//console.log(options.host+options.path+'-'+res.statusCode);
+		});;
+		res.on("end", function() {
+			clearTimeout(timer);
 			if(res.statusCode==200){
 				callback(html);
 			}else{
 				callback('');
 			}	
 		});
-	}).on('error', function(e) {
+		res.on('close',function(){
+			clearTimeout(timer);
+			console.log('response close');
+		});
+	});
+	req.on('error', function(e) {
 		console.log("Got error: " + e.message);
+	});
+	req.on('timeout',function(e){
+		callback('');
+		req.abort();
 	});
 };
 
