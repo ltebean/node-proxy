@@ -16,21 +16,16 @@ Page=function(config,basePart,callback){
 Page.prototype.subPartLoaded=function(subPartName,index,body){
 	this[subPartName][index]=body;
 	this.subPartCounter[subPartName]++;
-	console.log(subPartName+':'+this.subPartCounter[subPartName]);
 	this.checkFinished();
 };
 
-
 Page.prototype.checkFinished=function(){
-
 	for(var subPartName in  this.config.subParts){
 		if(this.subPartCounter[subPartName]<this.config.subParts[subPartName].components.length){
-			console.log('invalid ');
 			return;
 		}	
 	}
 	for(var subPartName in  this.config.subParts){
-		console.log('replace '+subPartName);
 		this.basePart=this.basePart.replace(this.config.subParts[subPartName].placeholder,this[subPartName].join(''));
 	}
 	this.callback(this.basePart);
