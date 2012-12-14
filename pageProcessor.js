@@ -6,28 +6,34 @@ Page=function(config,basePart,callback){
 	this.config=config;
 	this.callback=callback;
 	this.basePart=basePart;
-	this.leftPart=[];
-	this.mainPart=[];
-
+	this.subPartCounter={};
+	for(var subPartName in config.subParts){
+		this[subPartName]=[];
+		this.subPartCounter[subPartName]=0;
+	}
 }
 
-
-Page.prototype.leftPartLoaded=function(index,body){
-	this.leftPart[index]=body;
+Page.prototype.subPartLoaded=function(subPartName,index,body){
+	this[subPartName][index]=body;
+	this.subPartCounter[subPartName]++;
+	console.log(subPartName+':'+this.subPartCounter[subPartName]);
 	this.checkFinished();
 };
 
-Page.prototype.mainPartLoaded=function(index,body){
-	this.mainPart[index]=body;
-	this.checkFinished();
-};
 
 Page.prototype.checkFinished=function(){
-	if(this.leftPart.length==this.config.leftPart.length && this.mainPart.length==this.config.mainPart.length){
-		this.basePart=this.basePart.replace('<!-- left -->',this.leftPart.join(''));
-		this.basePart=this.basePart.replace('<!-- main -->',this.mainPart.join(''));
-		this.callback(this.basePart);
+
+	for(var subPartName in  this.config.subParts){
+		if(this.subPartCounter[subPartName]<this.config.subParts[subPartName].components.length){
+			console.log('invalid ');
+			return;
+		}	
 	}
+	for(var subPartName in  this.config.subParts){
+		console.log('replace '+subPartName);
+		this.basePart=this.basePart.replace(this.config.subParts[subPartName].placeholder,this[subPartName].join(''));
+	}
+	this.callback(this.basePart);
 }
 
 function processPage(config,params,callback){
@@ -38,18 +44,15 @@ function processPage(config,params,callback){
 		},
 		function buildPage(basePart) {
 			var page=new Page(config,basePart,callback);
-			config.mainPart.forEach(function(options,index){
-				processOptionsWithParams(options,params);
-				proxy.proxyRequest(options,function(body){
-					page.mainPartLoaded(index,body);
+			for(var subPartName in config.subParts){
+				config.subParts[subPartName].components.forEach(function(options,index){
+					var name=subPartName;
+					processOptionsWithParams(options,params);
+					proxy.proxyRequest(options,function(body){
+						page.subPartLoaded(name,index,body);
+					});
 				});
-			});
-			config.leftPart.forEach(function(options,index){
-				processOptionsWithParams(options,params);
-				proxy.proxyRequest(options,function(body){
-					page.leftPartLoaded(index,body);
-				});
-			});
+			}			
 		});
 }
 
