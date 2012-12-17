@@ -25,7 +25,6 @@ app.get('/products', function(req,res){
 	res.sendfile(__dirname+'/public/products.html');
 });
 
-
 app.get('/', function(req,res){
 	var params={id:1};
 	processor.processPage(templateConfig['default'], params, function (body){

@@ -6,24 +6,23 @@ Page=function(config,basePart,callback){
 	this.config=config;
 	this.callback=callback;
 	this.basePart=basePart;
-	this.subPartCounter={};
+	this.totalComponents=0;
+	this.loadedComponents=0;
 	for(var subPartName in config.subParts){
 		this[subPartName]=[];
-		this.subPartCounter[subPartName]=0;
+		this.totalComponents+=config.subParts[subPartName].components.length;
 	}
 }
 
 Page.prototype.subPartLoaded=function(subPartName,index,body){
 	this[subPartName][index]=body;
-	this.subPartCounter[subPartName]++;
+	this.loadedComponents++;
 	this.checkFinished();
 };
 
 Page.prototype.checkFinished=function(){
-	for(var subPartName in  this.config.subParts){
-		if(this.subPartCounter[subPartName]<this.config.subParts[subPartName].components.length){
-			return;
-		}	
+	if(this.loadedComponents<this.totalComponents){
+		return;
 	}
 	for(var subPartName in  this.config.subParts){
 		this.basePart=this.basePart.replace(this.config.subParts[subPartName].placeholder,this[subPartName].join(''));
@@ -60,8 +59,6 @@ function processOptionsWithParams(options,params){
 	}
 	options.path+=paramString;
 }
-
-
 
 exports.processor={
 	processPage:processPage
